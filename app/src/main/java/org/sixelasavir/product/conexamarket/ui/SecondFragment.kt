@@ -1,4 +1,4 @@
-package org.sixelasavir.product.conexamarket
+package org.sixelasavir.product.conexamarket.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater

@@ -1,7 +1,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="org.sixelasavir.product.conexamarket.MainActivity">
+    tools:context="org.sixelasavir.product.conexamarket.ui.MainActivity">
+
+    <item
+        android:id="@+id/action_category"
+        android:orderInCategory="100"
+        android:title="@string/action_shopping_cart"
+        android:icon="@drawable/ic_category"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_shopping_cart"
@@ -9,12 +16,4 @@
         android:title="@string/action_shopping_cart"
         app:actionLayout="@layout/ic_shopping_cart_badge"
         app:showAsAction="always" />
-
-    <item
-        android:id="@+id/action_shopping_cart2"
-        android:icon="@drawable/ic_shopping_cart"
-        android:orderInCategory="100"
-        android:title="@string/action_shopping_cart"
-        app:showAsAction="always" />
-
 </menu>
