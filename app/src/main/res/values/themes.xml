@@ -47,12 +47,12 @@
     </style>
 
     <style name="Button.Left" parent="Button">
-        <item name="android:src">@drawable/ic_add</item>
-        <item name="android:background">@drawable/selector_left_image_button</item>
+        <item name="android:src">@drawable/ic_remove</item>
+        <item name="android:background">@drawable/selector_remove_image_button</item>
     </style>
 
     <style name="Button.Right" parent="Button">
-        <item name="android:src">@drawable/ic_remove</item>
-        <item name="android:background">@drawable/selector_right_image_button</item>
+        <item name="android:src">@drawable/ic_add</item>
+        <item name="android:background">@drawable/selector_add_image_button</item>
     </style>
 </resources>
