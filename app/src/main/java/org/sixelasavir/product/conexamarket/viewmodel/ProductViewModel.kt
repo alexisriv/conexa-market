@@ -5,54 +5,45 @@ import androidx.lifecycle.MutableLiveData
 import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers.io
-import org.sixelasavir.product.conexamarket.model.Product
 import org.sixelasavir.product.conexamarket.repository.ProductRepository
+import org.sixelasavir.product.conexamarket.utils.Event
 
 class ProductViewModel(
     private val repository: ProductRepository = ProductRepository()
 ) : BaseViewModel() {
 
-    private val _products: MutableLiveData<List<ProductItem>> = MutableLiveData()
-    val products: LiveData<List<ProductItem>>
+    private val _products: MutableLiveData<Event<List<ProductItem>>> = MutableLiveData()
+    val products: LiveData<Event<List<ProductItem>>>
         get() = _products
 
-    private val _categories: MutableLiveData<List<String>> = MutableLiveData()
-    val categories: LiveData<List<String>>
+    private val _categories: MutableLiveData<Event<List<String>>> = MutableLiveData()
+    val categories: LiveData<Event<List<String>>>
         get() = _categories
 
     fun loadProducts() {
         repository.getProduct()
             .subscribeOn(io())
             .observeOn(mainThread())
-            .subscribe(::handleProductResponse)
-            .addTo(compositeDisposable)
-    }
-
-    private fun handleProductResponse(products: List<Product>?) {
-        products?.map { ProductItem(it) }.let { _products.postValue(it) }
+            .subscribe { products ->
+                products.map { ProductItem(it) }.let { _products.postValue(Event(it)) }
+            }.addTo(compositeDisposable)
     }
 
     fun loadProductCategories() {
         repository.getProductCategories()
             .subscribeOn(io())
             .observeOn(mainThread())
-            .subscribe(::handleProductCategoriesResponse)
-            .addTo(compositeDisposable)
-    }
-
-    private fun handleProductCategoriesResponse(categories: List<String>?) {
-        _categories.postValue(categories)
+            .subscribe { categories ->
+                _categories.postValue(Event(categories))
+            }.addTo(compositeDisposable)
     }
 
     fun loadProductsByCategory(category: String) {
         repository.getProductByCategory(category)
             .subscribeOn(io())
             .observeOn(mainThread())
-            .subscribe(::handleProductByCategoryResponse)
-            .addTo(compositeDisposable)
-    }
-
-    private fun handleProductByCategoryResponse(products: List<Product>?) {
-        products?.map { ProductItem(it) }.let { _products.postValue(it) }
+            .subscribe { products ->
+                products.map { ProductItem(it) }.let { _products.postValue(Event(it)) }
+            }.addTo(compositeDisposable)
     }
 }

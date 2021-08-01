@@ -17,6 +17,9 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.xwray.groupie.GroupieAdapter
 import org.sixelasavir.product.conexamarket.R
 import org.sixelasavir.product.conexamarket.databinding.FragmentFirstBinding
+import org.sixelasavir.product.conexamarket.extensible.getListIsNotEmpty
+import org.sixelasavir.product.conexamarket.utils.EventObserver
+import org.sixelasavir.product.conexamarket.viewmodel.ProductItem
 import org.sixelasavir.product.conexamarket.viewmodel.ProductViewModel
 
 /**
@@ -41,19 +44,23 @@ class FirstFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
-        viewModel.products.observe(viewLifecycleOwner) {
-            groupieAdapter.clear()
-            groupieAdapter.addAll(it)
-            groupieAdapter.notifyDataSetChanged()
-        }
-        viewModel.categories.observe(viewLifecycleOwner, ::dialogShow)
+        viewModel.products.observe(
+            viewLifecycleOwner,
+            EventObserver { loadAdapter(productItems = it) })
+        viewModel.categories.observe(
+            viewLifecycleOwner,
+            EventObserver { dialogShow(categories = it) })
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
-        viewModel.loadProducts()
+        viewModel.products.value?.peekContent()?.getListIsNotEmpty()?.let {
+            loadAdapter(it)
+        } ?: run {
+            viewModel.loadProducts()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -72,7 +79,9 @@ class FirstFragment : Fragment() {
                 true
             }
             R.id.action_category -> {
-                viewModel.loadProductCategories()
+                viewModel.categories.value?.peekContent()?.getListIsNotEmpty()?.let {
+                    dialogShow(it)
+                } ?: run { viewModel.loadProductCategories() }
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -112,15 +121,18 @@ class FirstFragment : Fragment() {
         }
     }
 
+    private fun loadAdapter(productItems: List<ProductItem>) {
+        groupieAdapter.clear()
+        groupieAdapter.addAll(productItems)
+        groupieAdapter.notifyDataSetChanged()
+    }
+
     private fun dialogShow(categories: List<String>) {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.categories)
-            .setItems(
-                categories.toTypedArray()
-            ) { _, i ->
+            .setItems(categories.toTypedArray()) { _, i ->
                 viewModel.loadProductsByCategory(categories[i])
-            }
-            .create()
+            }.create()
             .show()
     }
 }
