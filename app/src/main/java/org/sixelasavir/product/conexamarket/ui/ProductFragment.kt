@@ -88,8 +88,8 @@ class ProductFragment : Fragment(), OnClickListener {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_main, menu)
         val menuItem = menu.findItem(R.id.action_shopping_cart)
-        badgeTextView = menuItem.actionView.findViewById<TextView>(R.id.badgeCountTextView)
-        badgeCartView = menuItem.actionView.findViewById<View>(R.id.badgeCardView)
+        badgeTextView = menuItem.actionView.findViewById(R.id.badgeCountTextView)
+        badgeCartView = menuItem.actionView.findViewById(R.id.badgeCardView)
         menuItem.actionView.also { view ->
             view.setOnClickListener { onOptionsItemSelected(menuItem) }
         }

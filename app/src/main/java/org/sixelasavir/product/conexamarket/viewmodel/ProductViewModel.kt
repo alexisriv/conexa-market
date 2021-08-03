@@ -2,7 +2,6 @@ package org.sixelasavir.product.conexamarket.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers.io
@@ -28,43 +27,50 @@ class ProductViewModel(
     val shoppingCart: LiveData<Event<Long>>
         get() = _shoppingCart
 
+    private var isLoadProducts = false
+    private var isLoadProductsByCategory = false
+
     fun loadShoppingCart() {
         repositoryRoom.getCart()
             .subscribeOn(io())
             .observeOn(mainThread())
-            .subscribe {
+            .subscribe({
                 _shoppingCart.postValue(Event(it.count))
-            }.addTo(compositeDisposable)
+            }, ::onError).addTo(compositeDisposable)
     }
 
     fun loadProducts() {
+        isLoadProducts = true
         repositoryRoom.getItems().concatMap { items ->
-            repository.getProduct().concatMap { products ->
+            repository.getProduct().map { products ->
                 products.forEach { prod ->
                     items.forEach { item ->
                         if (prod.id == item.uid) prod.count = item.count
                     }
                 }
-                Observable.just(products)
+                return@map products
             }
         }.subscribeOn(io())
             .observeOn(mainThread())
-            .subscribe { products ->
-                products.map(::loadProductItem)
-                    .let { _products.postValue(Event(it)) }
-            }.addTo(compositeDisposable)
+            .subscribe({ products ->
+                if (isLoadProducts)
+                    products.map(::loadProductItem)
+                        .let { _products.postValue(Event(it)) }
+                isLoadProducts = false
+            }, ::onError).addTo(compositeDisposable)
     }
 
     fun loadProductCategories() {
         repository.getProductCategories()
             .subscribeOn(io())
             .observeOn(mainThread())
-            .subscribe { categories ->
+            .subscribe({ categories ->
                 _categories.postValue(Event(categories))
-            }.addTo(compositeDisposable)
+            }, ::onError).addTo(compositeDisposable)
     }
 
     fun loadProductsByCategory(category: String) {
+        isLoadProductsByCategory = true
         repositoryRoom.getItems().concatMap { items ->
             repository.getProductByCategory(category).map { products ->
                 products.forEach { prod ->
@@ -77,10 +83,12 @@ class ProductViewModel(
             }
         }.subscribeOn(io())
             .observeOn(mainThread())
-            .subscribe { products ->
-                products.map(::loadProductItem)
-                    .let { _products.postValue(Event(it)) }
-            }.addTo(compositeDisposable)
+            .subscribe({ products ->
+                if (isLoadProductsByCategory)
+                    products.map(::loadProductItem)
+                        .let { _products.postValue(Event(it)) }
+                isLoadProductsByCategory = false
+            }, ::onError).addTo(compositeDisposable)
     }
 
     private fun loadProductItem(product: Product): ProductItem =
@@ -90,8 +98,12 @@ class ProductViewModel(
         repositoryRoom.saveItemAndGetCount(product)
             .subscribeOn(io())
             .observeOn(mainThread())
-            .subscribe { count ->
+            .subscribe({ count ->
                 _shoppingCart.postValue(Event(count))
-            }.addTo(compositeDisposable)
+            }, ::onError).addTo(compositeDisposable)
+    }
+
+    private fun onError(t: Throwable) {
+        println("MESSAGE_ERROR - ${t.message}")
     }
 }
