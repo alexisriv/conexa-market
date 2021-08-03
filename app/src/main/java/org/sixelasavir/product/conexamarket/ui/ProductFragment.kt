@@ -78,11 +78,7 @@ class ProductFragment : Fragment(), OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
-        viewModel.products.value?.peekContent()?.getListIsNotEmpty()?.let {
-            loadAdapter(it)
-        } ?: run {
-            viewModel.loadProducts()
-        }
+        viewModel.loadProducts()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

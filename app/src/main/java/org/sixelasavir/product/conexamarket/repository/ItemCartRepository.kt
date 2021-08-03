@@ -1,5 +1,6 @@
 package org.sixelasavir.product.conexamarket.repository
 
+import io.reactivex.Completable
 import io.reactivex.Observable
 import org.sixelasavir.product.conexamarket.AppDatabase
 import org.sixelasavir.product.conexamarket.dao.Cart
@@ -34,4 +35,6 @@ class ItemCartRoomRepository(
     fun getItems(): Observable<List<ItemCart>> = dao.getAll()
 
     fun getCart(): Observable<Cart> = dao.getCart()
+
+    fun deleteAll(): Completable = dao.deleteAll()
 }

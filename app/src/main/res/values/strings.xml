@@ -2,9 +2,10 @@
     <string name="app_name">market</string>
     <string name="action_categories">Categories</string>
     <string name="action_shopping_cart">Shopping Cart</string>
+    <string name="action_delete">Delete All</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
+    <string name="market_fragment_label">Market</string>
+    <string name="shopping_cart_fragment_label">Shopping Cart</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
@@ -14,4 +15,7 @@
     <string name="default_price">$ 000.00</string>
     <string name="categories">Categories</string>
     <string name="initial_value">0</string>
+    <string name="title_count">Price $%1$sx%2$s: $%3$s</string>
+    <string name="total">Total</string>
+    <string name="amount">$%s</string>
 </resources>

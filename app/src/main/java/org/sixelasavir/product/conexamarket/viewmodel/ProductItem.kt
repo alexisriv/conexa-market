@@ -16,12 +16,13 @@ class ProductItem(
     private val product: Product
 ) : BindableItem<ItemProductBinding>() {
 
+    private val float2 = "%.2f"
     lateinit var onClickListener: OnClickListener
 
     override fun bind(viewBinding: ItemProductBinding, position: Int) {
         viewBinding.apply {
             titleTextView.text = product.title
-            priceTextView.text = product.price.toString()
+            priceTextView.text = float2.format(product.price)
             Glide.with(root)
                 .load(product.image)
                 .optionalCenterInside()

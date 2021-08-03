@@ -1,6 +1,9 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_size_title">18sp</dimen>
+    <dimen name="text_size_total">32sp</dimen>
+    <dimen name="text_size_subtotal">16sp</dimen>
+    <dimen name="text_size_amount">28sp</dimen>
     <dimen name="text_size_price">18sp</dimen>
     <dimen name="text_size_badge">10sp</dimen>
 </resources>
