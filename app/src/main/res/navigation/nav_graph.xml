@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/FirstFragment"
-        android:name="org.sixelasavir.product.conexamarket.ui.FirstFragment"
+        android:name="org.sixelasavir.product.conexamarket.ui.ProductFragment"
         android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
+        tools:layout="@layout/fragment_product">
 
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
-        android:name="org.sixelasavir.product.conexamarket.ui.SecondFragment"
+        android:name="org.sixelasavir.product.conexamarket.ui.ShoppingCartFragment"
         android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second"/>
+        tools:layout="@layout/fragment_shopping_cart"/>
 </navigation>

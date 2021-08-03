@@ -69,7 +69,7 @@
             app:layout_constraintVertical_bias="1.0">
 
             <ImageButton
-                android:id="@+id/addImageButton"
+                android:id="@+id/removeImageButton"
                 style="@style/Button.Left" />
 
             <TextView
@@ -82,7 +82,7 @@
                 android:text="@string/initial_value" />
 
             <ImageButton
-                android:id="@+id/removeImageButton"
+                android:id="@+id/addImageButton"
                 style="@style/Button.Right" />
 
         </LinearLayout>

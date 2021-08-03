@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">market</string>
+    <string name="action_categories">Categories</string>
     <string name="action_shopping_cart">Shopping Cart</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
@@ -11,6 +12,6 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="default_title">Title</string>
     <string name="default_price">$ 000.00</string>
-    <string name="categories">Categorias</string>
+    <string name="categories">Categories</string>
     <string name="initial_value">0</string>
 </resources>

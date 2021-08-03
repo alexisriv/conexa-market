@@ -6,7 +6,10 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
@@ -16,23 +19,24 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.xwray.groupie.GroupieAdapter
 import org.sixelasavir.product.conexamarket.R
-import org.sixelasavir.product.conexamarket.databinding.FragmentFirstBinding
+import org.sixelasavir.product.conexamarket.databinding.FragmentProductBinding
 import org.sixelasavir.product.conexamarket.extensible.getListIsNotEmpty
+import org.sixelasavir.product.conexamarket.model.Product
 import org.sixelasavir.product.conexamarket.utils.EventObserver
 import org.sixelasavir.product.conexamarket.viewmodel.ProductItem
 import org.sixelasavir.product.conexamarket.viewmodel.ProductViewModel
 
-/**
- * A simple [Fragment] subclass as the default destination in the navigation.
- */
-class FirstFragment : Fragment() {
+class ProductFragment : Fragment(), OnClickListener {
 
     private val viewModel: ProductViewModel by activityViewModels()
 
-    private var _binding: FragmentFirstBinding? = null
+    private var _binding: FragmentProductBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var groupieAdapter: GroupieAdapter
+
+    private lateinit var badgeTextView: TextView
+    private lateinit var badgeCartView: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,15 +46,33 @@ class FirstFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentFirstBinding.inflate(inflater, container, false)
-        viewModel.products.observe(
-            viewLifecycleOwner,
-            EventObserver { loadAdapter(productItems = it) })
-        viewModel.categories.observe(
-            viewLifecycleOwner,
-            EventObserver { dialogShow(categories = it) })
+    ): View {
+        _binding = FragmentProductBinding.inflate(inflater, container, false)
+        viewModel.apply {
+            products.observe(
+                viewLifecycleOwner,
+                EventObserver {
+                    loadAdapter(productItems = it.map { pI0 ->
+                        pI0.apply { onClickListener = this@ProductFragment }
+                    })
+                })
+            categories.observe(
+                viewLifecycleOwner,
+                EventObserver { dialogShow(categories = it) })
+            shoppingCart.observe(
+                viewLifecycleOwner,
+                EventObserver { shoppingCart(count = it) })
+        }
         return binding.root
+    }
+
+    private fun shoppingCart(count: Long) {
+        if (count > 0) {
+            badgeTextView.text = count.toString()
+            badgeCartView.visibility = VISIBLE
+        } else {
+            badgeCartView.visibility = INVISIBLE
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -66,9 +88,12 @@ class FirstFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_main, menu)
         val menuItem = menu.findItem(R.id.action_shopping_cart)
+        badgeTextView = menuItem.actionView.findViewById<TextView>(R.id.badgeCountTextView)
+        badgeCartView = menuItem.actionView.findViewById<View>(R.id.badgeCardView)
         menuItem.actionView.also { view ->
             view.setOnClickListener { onOptionsItemSelected(menuItem) }
         }
+        viewModel.loadShoppingCart()
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -122,9 +147,10 @@ class FirstFragment : Fragment() {
     }
 
     private fun loadAdapter(productItems: List<ProductItem>) {
-        groupieAdapter.clear()
-        groupieAdapter.addAll(productItems)
-        groupieAdapter.notifyDataSetChanged()
+        groupieAdapter.apply {
+            clear()
+            addAll(productItems)
+        }.notifyDataSetChanged()
     }
 
     private fun dialogShow(categories: List<String>) {
@@ -135,4 +161,12 @@ class FirstFragment : Fragment() {
             }.create()
             .show()
     }
+
+    override fun onclick(p0: Product) {
+        viewModel.saveProductInShoppingCart(p0)
+    }
+}
+
+interface OnClickListener {
+    fun onclick(p0: Product)
 }
